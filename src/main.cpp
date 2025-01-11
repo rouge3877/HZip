@@ -38,9 +38,9 @@ int main(int argc, char* argv[]) {
         }
 
     } catch (const std::exception& ex) {
-        std::cerr << "错误: " << ex.what() << std::endl;
+        std::cerr << "Error: " << ex.what() << std::endl;
         return EXIT_FAILURE;
     }
 
-    return 0;
+    return EXIT_SUCCESS;
 }

@@ -3,7 +3,7 @@
 #include <queue>
 #include <stdexcept>
 
-// VectorBoolHash实现
+// VectorBoolHash implementation
 std::size_t VectorBoolHash::operator()(const std::vector<bool>& v) const {
     std::size_t hash = 0;
     for (bool bit : v) {
@@ -12,7 +12,7 @@ std::size_t VectorBoolHash::operator()(const std::vector<bool>& v) const {
     return hash;
 }
 
-// HuffmanNode实现
+// HuffmanNode implementation
 HuffmanNode::HuffmanNode(ORIGINAL_DATA_TYPE ch, int freq)
     : character(ch), frequency(freq), left(nullptr), right(nullptr) {}
 
@@ -20,21 +20,21 @@ bool HuffmanNode::isLeaf() const {
     return !left && !right;
 }
 
-// CompareNode实现
+// CompareNode implementation
 bool CompareNode::operator()(const std::shared_ptr<HuffmanNode>& a, const std::shared_ptr<HuffmanNode>& b) const {
     return a->frequency > b->frequency;
 }
 
-// HuffmanTree实现
+// HuffmanTree implementation
 void HuffmanTree::buildTree(const std::unordered_map<ORIGINAL_DATA_TYPE, int>& frequencyMap) {
     std::priority_queue<std::shared_ptr<HuffmanNode>, std::vector<std::shared_ptr<HuffmanNode>>, CompareNode> minHeap;
 
-    // 创建叶子节点并加入优先队列
+    // Create leaf nodes and add them to the priority queue
     for (const auto& [ch, freq] : frequencyMap) {
         minHeap.emplace(std::make_shared<HuffmanNode>(ch, freq));
     }
 
-    // 处理特殊情况：文件中只有一个唯一字符
+    // Handle special case: only one unique character in the file
     if (minHeap.size() == 1) {
         auto onlyNode = minHeap.top();
         minHeap.pop();
@@ -43,7 +43,7 @@ void HuffmanTree::buildTree(const std::unordered_map<ORIGINAL_DATA_TYPE, int>& f
         minHeap.emplace(parent);
     }
 
-    // 构建哈夫曼树
+    // Build the Huffman tree
     while (minHeap.size() > 1) {
         auto left = minHeap.top();
         minHeap.pop();
@@ -57,7 +57,7 @@ void HuffmanTree::buildTree(const std::unordered_map<ORIGINAL_DATA_TYPE, int>& f
         minHeap.emplace(parent);
     }
 
-    // 树的根节点
+    // Root node of the tree
     if (!minHeap.empty()) {
         root = minHeap.top();
         minHeap.pop();
@@ -65,25 +65,25 @@ void HuffmanTree::buildTree(const std::unordered_map<ORIGINAL_DATA_TYPE, int>& f
 }
 
 void HuffmanTree::buildTreeFromCodeTable(const std::unordered_map<std::vector<bool>, ORIGINAL_DATA_TYPE, VectorBoolHash>& inverseCodeTable) {
-    root = std::make_shared<HuffmanNode>(0, 0); // 创建一个空的根节点
+    root = std::make_shared<HuffmanNode>(0, 0); // Create an empty root node
 
     for (const auto& [code, ch] : inverseCodeTable) {
         auto currentNode = root;
         for (size_t i = 0; i < code.size(); ++i) {
             bool bit = code[i];
-            if (bit) { // 右子节点
+            if (bit) { // Right child node
                 if (!currentNode->right) {
                     currentNode->right = std::make_shared<HuffmanNode>(0, 0);
                 }
                 currentNode = currentNode->right;
-            } else { // 左子节点
+            } else { // Left child node
                 if (!currentNode->left) {
                     currentNode->left = std::make_shared<HuffmanNode>(0, 0);
                 }
                 currentNode = currentNode->left;
             }
         }
-        currentNode->character = ch; // 叶子节点赋值
+        currentNode->character = ch; // Assign value to leaf node
     }
 }
 

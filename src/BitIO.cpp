@@ -2,7 +2,7 @@
 #include "BitIO.h"
 #include <stdexcept>
 
-// BitWriter实现
+// BitWriter implementation
 BitWriter::BitWriter(std::ofstream& output) : out(output), buffer(0), bitCount(0) {}
 
 void BitWriter::writeBit(bool bit) {
@@ -34,7 +34,7 @@ void BitWriter::writeByte(uint8_t byte) {
 
 void BitWriter::flush() {
     if (bitCount > 0) {
-        buffer = buffer << (8 - bitCount); // 将剩余比特左移到高位
+        buffer = buffer << (8 - bitCount); // Shift remaining bits to the high position
         out.write(reinterpret_cast<const char*>(&buffer), sizeof(uint8_t));
         buffer = 0;
         bitCount = 0;
@@ -43,7 +43,7 @@ void BitWriter::flush() {
 
 int BitWriter::flushAndGetPadding() {
     if (bitCount > 0) {
-        buffer = buffer << (8 - bitCount); // 将剩余比特左移到高位
+        buffer = buffer << (8 - bitCount); // Shift remaining bits to the high position
         out.write(reinterpret_cast<const char*>(&buffer), sizeof(uint8_t));
         int padding = 8 - bitCount;
         buffer = 0;
@@ -57,18 +57,18 @@ int BitWriter::getBitCount() const {
     return bitCount;
 }
 
-// BitReader实现
+// BitReader implementation
 BitReader::BitReader(std::ifstream& input, size_t dataSize)
     : in(input), buffer(0), bitCount(0), bytesRead(0), dataSize(dataSize) {}
 
 bool BitReader::readBit(bool& bit) {
     if (bytesRead >= dataSize && bitCount == 0) {
-        return false; // EOF或错误
+        return false; // EOF or error
     }
 
     if (bitCount == 0) {
         if (!in.read(reinterpret_cast<char*>(&buffer), sizeof(uint8_t))) {
-            return false; // EOF或错误
+            return false; // EOF or error
         }
         bitCount = 8;
         bytesRead++;

@@ -7,60 +7,60 @@
 #include <iostream>
 #include <filesystem>
 
-// 工具函数声明（假设在 Utils.h 中）
+// Utility function declaration (assumed to be in Utils.h)
 std::string getAbsolutePath(const std::string& filename);
 
 void HuffmanDecoder::decompress(const std::string& inputPath, const std::string& outputPath) {
-    // 打开输入文件
+    // Open input file
     std::ifstream inputFile(inputPath, std::ios::binary);
     if (!inputFile.is_open()) {
-        throw std::runtime_error("无法打开输入文件: " + inputPath);
+        throw std::runtime_error("Unable to open input file: " + inputPath);
     }
 
-    // 获取文件大小
+    // Get file size
     inputFile.seekg(0, std::ios::end);
     std::streampos fileSize = inputFile.tellg();
 
-    // 回到文件开头
+    // Return to the beginning of the file
     inputFile.seekg(0, std::ios::beg);
 
-    // 读取编码表的大小（1字节）
+    // Read the size of the code table (1 byte)
     uint8_t tableSize = 0;
     if (!inputFile.read(reinterpret_cast<char*>(&tableSize), sizeof(uint8_t))) {
-        throw std::runtime_error("无法读取编码表大小");
+        throw std::runtime_error("Unable to read code table size");
     }
 
-    // 读取总字符数（4字节）
+    // Read the total number of characters (4 bytes)
     int totalChars = 0;
     if (!inputFile.read(reinterpret_cast<char*>(&totalChars), sizeof(int))) {
-        throw std::runtime_error("无法读取总字符数");
+        throw std::runtime_error("Unable to read total number of characters");
     }
 
-    // 读取编码表
+    // Read the code table
     std::unordered_map<std::vector<bool>, ORIGINAL_DATA_TYPE, VectorBoolHash> inverseCodeTable;
     for (int i = 0; i < tableSize; ++i) {
-        // 读取字符（1字节）
+        // Read character (1 byte)
         ORIGINAL_DATA_TYPE charKey;
         if (!inputFile.read(reinterpret_cast<char*>(&charKey), sizeof(ORIGINAL_DATA_TYPE))) {
-            throw std::runtime_error("无法读取编码表中的字符");
+            throw std::runtime_error("Unable to read character from code table");
         }
 
-        // 读取编码长度（1字节）
+        // Read code length (1 byte)
         uint8_t codeLength = 0;
         if (!inputFile.read(reinterpret_cast<char*>(&codeLength), sizeof(uint8_t))) {
-            throw std::runtime_error("无法读取编码长度");
+            throw std::runtime_error("Unable to read code length");
         }
 
-        // 计算需要读取的字节数
+        // Calculate the number of bytes needed to read
         int bytesNeeded = (codeLength + 7) / 8;
 
-        // 读取编码比特
+        // Read encoded bits
         std::vector<uint8_t> packedBytes(bytesNeeded);
         if (!inputFile.read(reinterpret_cast<char*>(packedBytes.data()), bytesNeeded)) {
-            throw std::runtime_error("无法读取编码比特");
+            throw std::runtime_error("Unable to read encoded bits");
         }
 
-        // 解包比特
+        // Unpack bits
         std::vector<bool> codeBits;
         for (size_t b = 0; b < packedBytes.size(); ++b) {
             uint8_t byte = packedBytes[b];
@@ -75,62 +75,62 @@ void HuffmanDecoder::decompress(const std::string& inputPath, const std::string&
         inverseCodeTable[codeBits] = charKey;
     }
 
-    // 计算填充位的位置
-    // 填充位在文件的最后一个字节
+    // Calculate the position of the padding bits
+    // Padding bits are in the last byte of the file
     if (fileSize < 1) {
-        throw std::runtime_error("文件过小，无法包含填充位");
+        throw std::runtime_error("File too small to contain padding bits");
     }
     inputFile.seekg(-static_cast<std::streamoff>(1), std::ios::end);
     uint8_t padding = 0;
     if (!inputFile.read(reinterpret_cast<char*>(&padding), sizeof(uint8_t))) {
-        throw std::runtime_error("无法读取填充位数");
+        throw std::runtime_error("Unable to read number of padding bits");
     }
 
-    // 计算数据部分的起始位置和长度
-    // 注意：此处的逻辑需要确保正确计算数据的起始位置和大小
-    // 首先，跳过头部信息（tableSize 和 totalChars）
-    inputFile.seekg(1 + sizeof(int), std::ios::beg); // 跳过 tableSize 和 totalChars
+    // Calculate the start position and length of the data section
+    // Note: Ensure correct calculation of data start position and size
+    // Skip header information (tableSize and totalChars)
+    inputFile.seekg(1 + sizeof(int), std::ios::beg); // Skip tableSize and totalChars
 
-    // 跳过编码表
+    // Skip code table
     for (int i = 0; i < tableSize; ++i) {
-        // 跳过字符（1字节）和编码长度（1字节）
+        // Skip character (1 byte) and code length (1 byte)
         inputFile.seekg(1 + 1, std::ios::cur);
-        // 读取编码长度
+        // Read code length
         uint8_t codeLength = 0;
         inputFile.seekg(-1, std::ios::cur); // Move back to read codeLength
         if (!inputFile.read(reinterpret_cast<char*>(&codeLength), sizeof(uint8_t))) {
-            throw std::runtime_error("无法读取编码长度");
+            throw std::runtime_error("Unable to read code length");
         }
-        // 计算需要跳过的字节数
+        // Calculate the number of bytes to skip
         int bytesToSkip = (codeLength + 7) / 8;
         inputFile.seekg(bytesToSkip, std::ios::cur);
     }
 
-    // 数据开始的位置
+    // Data start position
     std::streampos dataBegin = inputFile.tellg();
 
-    // 数据大小：文件总大小 - 数据开始位置 - 1（填充位）
-    // 需要将 std::streampos 转换为 std::streamoff 以进行减法
+    // Data size: total file size - data start position - 1 (padding byte)
+    // Convert std::streampos to std::streamoff for subtraction
     std::streamoff dataSizeOffset = fileSize - static_cast<std::streamoff>(dataBegin) - static_cast<std::streamoff>(1);
     size_t dataSize = static_cast<size_t>(dataSizeOffset);
 
-    // 重新定位到数据开始的位置
+    // Reposition to the start of the data section
     inputFile.seekg(dataBegin, std::ios::beg);
 
-    // 构建哈夫曼树
+    // Build Huffman tree
     HuffmanTree tree;
     tree.buildTreeFromCodeTable(inverseCodeTable);
 
-    // 打开输出文件
+    // Open output file
     std::ofstream outputFile(outputPath, std::ios::binary);
     if (!outputFile.is_open()) {
-        throw std::runtime_error("无法打开输出文件: " + outputPath);
+        throw std::runtime_error("Unable to open output file: " + outputPath);
     }
 
-    // 初始化BitReader，传入数据大小
+    // Initialize BitReader with data size
     BitReader bitReader(inputFile, dataSize);
 
-    // 解码数据
+    // Decode data
     std::shared_ptr<HuffmanNode> currentNode = tree.root;
     int decodedChars = 0;
     bool bitValue;
@@ -140,13 +140,13 @@ void HuffmanDecoder::decompress(const std::string& inputPath, const std::string&
             if (currentNode->right) {
                 currentNode = currentNode->right;
             } else {
-                throw std::runtime_error("解码错误：无效的比特序列");
+                throw std::runtime_error("Decoding error: invalid bit sequence");
             }
         } else {
             if (currentNode->left) {
                 currentNode = currentNode->left;
             } else {
-                throw std::runtime_error("解码错误：无效的比特序列");
+                throw std::runtime_error("Decoding error: invalid bit sequence");
             }
         }
 
@@ -157,9 +157,9 @@ void HuffmanDecoder::decompress(const std::string& inputPath, const std::string&
         }
     }
 
-    // 关闭文件
+    // Close files
     inputFile.close();
     outputFile.close();
 
-    std::cout << "解压完成！" << std::endl;
+    std::cout << "Decompression complete!" << std::endl;
 }
