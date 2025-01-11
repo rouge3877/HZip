@@ -1,5 +1,5 @@
 build/
-test/zip-result/
-test/unzip-result/
+test/
+!test/testbench.sh
 
 .main.cpp
