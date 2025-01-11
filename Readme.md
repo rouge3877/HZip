@@ -1,5 +1,7 @@
 # HZip
 
+a simple file compression and decompression tool based on Huffman coding (*for educational purposes only*).
+
 ## Introduction
 
 HZip is a powerful file compression and decompression tool based on Huffman coding. It efficiently compresses text files and can restore them to their original state when needed. HZip is designed to be fast, reliable, and easy to use.
@@ -11,11 +13,11 @@ HZip is a powerful file compression and decompression tool based on Huffman codi
 - Support for text files (*Pity, only ascii text files are supported*)
 - Comprehensive testing script
 
-## Build Instructions
+## Build and Usage
 
 This project uses CMake. Ensure that CMake and a supported C++ compiler (e.g., g++ or clang++) are installed on your system.
 
-### Steps
+### Build Steps
 
 1. Clone the repository:
    ```bash
@@ -34,7 +36,7 @@ This project uses CMake. Ensure that CMake and a supported C++ compiler (e.g., g
    ```
 4. After building, the executable `hzip` will be located in the `build/` directory.
 
-## Usage
+### Usage 
 
 To compress a file:
 ```bash
@@ -58,10 +60,6 @@ For testing, you can use the provided script `testscript.sh`:
 ```
 
 This script will compress the input file, decompress the compressed file, and compare the original and decompressed files. It will also automatically create a `test` directory in the root of the project and store the compressed and decompressed files there.
-
-## Contributing
-
-Contributions are welcome! Please fork the repository and submit pull requests. For major changes, please open an issue first to discuss what you would like to change.
 
 ## License
 
