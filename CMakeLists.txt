@@ -18,4 +18,4 @@ set(SOURCES
     src/Utils.cpp
 )
 
-add_executable(huff ${SOURCES})
+add_executable(hzip ${SOURCES})
