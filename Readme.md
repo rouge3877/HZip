@@ -31,12 +31,12 @@ HuffmanCoding 是一个基于哈夫曼编码的文件压缩和解压工具。它
     make
     ```
 
-4. 构建完成后，可执行文件 `huff` 将位于 `build/` 目录下。
+4. 构建完成后，可执行文件 `hzip` 将位于 `build/` 目录下。
 
 ## 使用
 
 ```bash
-huff -[c|d] <infile> <outfile>
+hzip -[c|d] <infile> <outfile>
 ```
 
 - `-c`：压缩文件
@@ -47,6 +47,11 @@ huff -[c|d] <infile> <outfile>
 ## 示例
 
 ```bash
-huff -c input.txt output.huff
-huff -d output.huff output.txt
+hzip -c input.txt output.huff
+hzip -d output.huff output.txt
 ```
+## TODO
+
+1. 支持二进制文件的压缩和解压
+2. 支持多线程压缩和解压
+3. 支持压缩文件的加密和解密
