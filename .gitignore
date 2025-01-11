@@ -1,2 +1,5 @@
 build/
+test/zip-result/
+test/unzip-result/
+
 .main.cpp
