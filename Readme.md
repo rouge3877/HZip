@@ -1,57 +1,76 @@
-# HuffmanCoding
+# HZip
 
-## 简介
+## Introduction
 
-HuffmanCoding 是一个基于哈夫曼编码的文件压缩和解压工具。它能够高效地压缩文本文件，并在需要时将其解压回原始状态。
+HZip is a powerful file compression and decompression tool based on Huffman coding. It efficiently compresses text files and can restore them to their original state when needed. HZip is designed to be fast, reliable, and easy to use.
 
-## 构建
+## Features
 
-本项目使用 CMake 进行构建。确保你的系统上已安装 CMake 和支持的 C++ 编译器（如 g++ 或 clang++）。
+- Efficient compression and decompression using Huffman coding
+- Simple command-line interface
+- Support for text files (*Pity, only ascii text files are supported*)
+- Comprehensive testing script
 
-### 步骤
+## Build Instructions
 
-1. 克隆仓库：
+This project uses CMake. Ensure that CMake and a supported C++ compiler (e.g., g++ or clang++) are installed on your system.
 
-    ```bash
-    git clone <repository_url>
-    cd HuffmanCoding
-    ```
+### Steps
 
-2. 创建构建目录并进入：
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/rouge3877/HZip.git
+   cd HZip
+   ```
+2. Create and navigate to the build directory:
+   ```bash
+   mkdir build
+   cd build
+   ```
+3. Run CMake and build the project:
+   ```bash
+   cmake ..
+   make
+   ```
+4. After building, the executable `hzip` will be located in the `build/` directory.
 
-    ```bash
-    mkdir build
-    cd build
-    ```
+## Usage
 
-3. 运行 CMake 并构建项目：
-
-    ```bash
-    cmake ..
-    make
-    ```
-
-4. 构建完成后，可执行文件 `hzip` 将位于 `build/` 目录下。
-
-## 使用
-
+To compress a file:
 ```bash
-hzip -[c|d] <infile> <outfile>
+./hzip -c <input_file> <output_file>
+```
+To decompress a file:
+```bash
+./hzip -d <compressed_file> <output_file>
 ```
 
-- `-c`：压缩文件
-- `-d`：解压文件
-- `<infile>`：输入文件
-- `<outfile>`：输出文件
-
-## 示例
-
+For more advanced options and help:
 ```bash
-hzip -c input.txt output.huff
-hzip -d output.huff output.txt
+./hzip --help
 ```
+
+## Testing
+
+For testing, you can use the provided script `testscript.sh`:
+```bash
+./testscript.sh <input_file>
+```
+
+This script will compress the input file, decompress the compressed file, and compare the original and decompressed files. It will also automatically create a `test` directory in the root of the project and store the compressed and decompressed files there.
+
+## Contributing
+
+Contributions are welcome! Please fork the repository and submit pull requests. For major changes, please open an issue first to discuss what you would like to change.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
 ## TODO
 
-1. 支持二进制文件的压缩和解压
-2. 支持多线程压缩和解压
-3. 支持压缩文件的加密和解密
+- [ ] Add support for non-ASCII text files
+- [ ] Add support for different file types (currently, only text files are supported)
+- [ ] Add support for directories
+- [ ] Implement multithreading for faster compression and decompression
+- [ ] Add support for encryption and decryption
