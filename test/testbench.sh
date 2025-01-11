@@ -8,7 +8,7 @@ if [ -z "$1" ]; then
 fi
 
 input_file="$1"
-huff_bin="../build/huff"
+huff_bin="../build/hzip"
 
 
 mkdir -p zip-result
